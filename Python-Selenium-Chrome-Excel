@@ -1,0 +1,38 @@
+from selenium import webdriver
+import unittest, time
+import xlrd
+from selenium.webdriver.common.keys import Keys
+import csv
+import xlsxwriter
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+driver = webdriver.Chrome("/usr/local/bin/chromedriver")
+driver.maximize_window()
+driver.get('https://www.google.com/maps')
+
+wb=xlrd.open_workbook('/Users/kharelthompson/seleniumtest1.xlsx')
+sheetname = wb.sheet_names() 
+#Read for XLSX Sheet names
+sh1 = wb.sheet_by_index(0) 
+
+
+for i in range (0,5):
+    workbook = xlsxwriter.Workbook('seleniumtest3.xlsx')
+    worksheet = workbook.add_worksheet()
+    rownum=(0)
+    rows = sh1.row_values(rownum)
+    elem = driver.find_element_by_id("searchboxinput")
+    elem.send_keys(rows[0] + ' california ')
+    elem.send_keys(Keys.RETURN)
+    print "The keyword [" + rows[0] + "] is searched"
+    #driver.back()
+    i=i+1
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="pane"]/div/div[2]/div/div/div[4]/div/span[3]/span[1]/span[1]/span')))
+    address = driver.find_element_by_xpath('//*[@id="pane"]/div/div[2]/div/div/div[4]/div/span[3]/span[1]/span[1]/span').text
+    #use "find_element" use ".text" MAKE SURE YOUR XPATH IS RIGHT!!!
+    print address
+    worksheet.write('B2', address)
+driver.quit()
