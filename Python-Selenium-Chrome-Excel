@@ -10,29 +10,44 @@ from selenium.webdriver.support import expected_conditions as EC
 
 driver = webdriver.Chrome("/usr/local/bin/chromedriver")
 driver.maximize_window()
-driver.get('https://www.google.com/maps')
+driver.get('https://www.google.com/maps/@38.7879734,-121.3370072,15z?')
 
 wb=xlrd.open_workbook('/Users/kharelthompson/seleniumtest1.xlsx')
 sheetname = wb.sheet_names() 
 #Read for XLSX Sheet names
-sh1 = wb.sheet_by_index(0) 
+sh1 = wb.sheet_by_index(0)
+
+workbook = xlsxwriter.Workbook('/Users/kharelthompson/seleniumtest4.xlsx')
+worksheet = workbook.add_worksheet()
+#KEEP THIS OUTSIDE OF THE LOOP, OR YOU WILL OVERRIDE PREVIOUS ROWS
 
 
-for i in range (0,5):
-    workbook = xlsxwriter.Workbook('seleniumtest3.xlsx')
-    worksheet = workbook.add_worksheet()
-    rownum=(0)
-    rows = sh1.row_values(rownum)
+for i in range (sh1.nrows):
+    rows = sh1.row_values(i)
     elem = driver.find_element_by_id("searchboxinput")
-    elem.send_keys(rows[0] + ' california ')
+    elem.send_keys(rows[0] + ' near Sacramento' + ' california')
     elem.send_keys(Keys.RETURN)
     print "The keyword [" + rows[0] + "] is searched"
-    #driver.back()
-    i=i+1
     wait = WebDriverWait(driver, 10)
     wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="pane"]/div/div[2]/div/div/div[4]/div/span[3]/span[1]/span[1]/span')))
     address = driver.find_element_by_xpath('//*[@id="pane"]/div/div[2]/div/div/div[4]/div/span[3]/span[1]/span[1]/span').text
+    time.sleep(3)
     #use "find_element" use ".text" MAKE SURE YOUR XPATH IS RIGHT!!!
+    wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="pane"]/div/div[2]/div/div/div[6]/div/span[3]/span[1]/button')))
+    phone = driver.find_element_by_xpath('//*[@id="pane"]/div/div[2]/div/div/div[6]/div/span[3]/span[1]/button').text
+    time.sleep(3)
+    wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="pane"]/div/div[2]/div/div/div[5]/div/span[3]/span[1]/span[2]/span/a[3]')))
+    website = driver.find_element_by_xpath('//*[@id="pane"]/div/div[2]/div/div/div[5]/div/span[3]/span[1]/span[2]/span/a[3]').text
+    #use "find_elements" to get PHONE NUMBER & WEBSITE?
     print address
-    worksheet.write('B2', address)
+    worksheet.write(i+1, 1, address)
+    time.sleep(3)
+    worksheet.write(i+1, 2, phone)
+    time.sleep(3)
+    worksheet.write(i+1, 3, website)
+    #KEY LINE FOR ADDING ROWS TO EXCEL
+    time.sleep(3)
+    driver.execute_script("window.history.go(-1)")
+    time.sleep(10)
+workbook.close()
 driver.quit()
