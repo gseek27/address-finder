@@ -13,12 +13,12 @@ binary = FirefoxBinary('/Applications/Firefox.app/Contents/MacOS/firefox-bin')
 driver = webdriver.Firefox(executable_path = "/usr/local/bin/geckodriver")
 driver.get('https://www.google.com/maps/@38.7879734,-121.3370072,15z?')
 
-wb=xlrd.open_workbook('/Users/kharelthompson/seleniumtest1.xlsx')
+wb=xlrd.open_workbook('/Users/name/seleniumtest1.xlsx')
 sheetname = wb.sheet_names() 
 #Read for XLSX Sheet names
 sh1 = wb.sheet_by_index(0) 
 
-workbook = xlsxwriter.Workbook('/Users/kharelthompson/seleniumtest3.xlsx')
+workbook = xlsxwriter.Workbook('/Users/name/seleniumtest3.xlsx')
 worksheet = workbook.add_worksheet()
 #KEEP THIS OUTSIDE OF THE LOOP, OR YOU WILL OVERRIDE PREVIOUS ROWS
 
